@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#090e1a" />
+  <title>Inventario Costo Dpto. 94 | Local 155</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg-app: #eef2f6;
+      --bg-card: #ffffff;
+      --bg-subtle: #f8fafc;
+      --header-bg: #0b1120;
+      --header-surface: rgba(30, 41, 59, 0.82);
+      --header-border: rgba(148, 163, 184, 0.18);
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --deposito-color: #f59e0b;
+      --piso-color: #10b981;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --success: #10b981;
+      --success-dark: #059669;
+      --amber-soft: #fef3c7;
+      --amber-dark: #b45309;
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 8px 20px -6px rgba(15, 23, 42, 0.1);
+      --shadow-lg: 0 20px 35px -8px rgba(15, 23, 42, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      background-image: radial-gradient(#cbd5e1 0.7px, transparent 0.7px);
+      background-size: 18px 18px;
+      color: var(--text-main);
+      padding-bottom: 56px;
+      overflow-x: hidden;
+    }
+
+    .app-header {
+      background: linear-gradient(180deg, #090e1a 0%, #111827 100%);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--header-border);
+      box-shadow: 0 10px 25px -5px rgba(2, 6, 23, 0.35);
+    }
+
+    .header-top, .kpi-bar, .tabs-nav, .controls-bar {
+      max-width: 1040px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 1 200px; }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #22c55e 0%, #059669 100%);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.05rem;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .brand h1 { font-size: 0.98rem; font-weight: 700; line-height: 1.2; }
+    .brand .subtitle { font-size: 0.72rem; color: #94a3b8; }
+    .header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: 0.15s ease;
+    }
+
+    .btn:active { transform: scale(0.96); }
+    .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
+    .btn-secondary { background: #e2e8f0; color: var(--text-main); }
+    .btn-success { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; }
+    .btn-danger-outline {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      color: #fca5a5;
+    }
+
+    .kpi-bar {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 640px) {
+      .kpi-bar {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+    }
+
+    .kpi-card {
+      background: var(--header-surface);
+      border: 1px solid var(--header-border);
+      padding: 7px 8px;
+      border-radius: 10px;
+      text-align: center;
+      min-width: 0;
+    }
+
+    .kpi-label {
+      display: block;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .kpi-value {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #f8fafc;
+      font-variant-numeric: tabular-nums;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tabs-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--header-border);
+      margin-bottom: 8px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: #94a3b8;
+      border: none;
+      padding: 8px 4px;
+      border-radius: 9px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    @media (min-width: 480px) {
+      .tab-btn { font-size: 0.8rem; padding: 9px 8px; gap: 6px; }
+    }
+
+    .tab-btn.active[data-tab="deposito"] { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; }
+    .tab-btn.active[data-tab="piso"] { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .tab-btn.active[data-tab="resumen"] { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; }
+
+    .tab-badge {
+      background: rgba(0, 0, 0, 0.28);
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .controls-bar { display: flex; flex-direction: column; gap: 6px; }
+    @media (min-width: 720px) {
+      .controls-bar { flex-direction: row; align-items: center; gap: 8px; }
+      .search-box { flex: 1.2; }
+      .filter-row { flex: 1; }
+    }
+
+    .search-box { position: relative; display: flex; align-items: center; }
+    .search-icon { position: absolute; left: 11px; font-size: 0.82rem; pointer-events: none; }
+
+    #search-input {
+      width: 100%;
+      padding: 8px 32px;
+      border-radius: 10px;
+      border: 1px solid var(--header-border);
+      background: rgba(30, 41, 59, 0.92);
+      color: #fff;
+      font-size: 0.86rem;
+    }
+
+    #search-input::placeholder { color: #94a3b8; }
+
+    .clear-btn {
+      position: absolute;
+      right: 8px;
+      background: rgba(148, 163, 184, 0.2);
+      border: none;
+      color: #e2e8f0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .filter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+    select {
+      background: rgba(30, 41, 59, 0.92);
+      color: #f8fafc;
+      border: 1px solid var(--header-border);
+      border-radius: 10px;
+      padding: 7px 8px;
+      font-size: 0.76rem;
+      min-width: 0;
+    }
+
+    .app-main { max-width: 1040px; margin: 0 auto; padding: 12px; }
+    @media (min-width: 640px) { .app-main { padding: 16px; } }
+
+    .section-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    #section-banner-icon {
+      font-size: 1.15rem;
+      background: rgba(255, 255, 255, 0.75);
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .banner-deposito { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+    .banner-piso { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+
+    .items-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 720px) { .items-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; } }
+
+    .item-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      border-left: 5px solid #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .item-card:hover { box-shadow: var(--shadow-md); }
+    .item-card.counted {
+      border-left-color: var(--success);
+      background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    }
+
+    .item-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    .item-title { font-size: 0.92rem; font-weight: 700; color: var(--text-main); word-break: break-word; }
+    .item-codes { font-size: 0.72rem; color: var(--text-muted); margin-top: 3px; }
+    .item-codes strong { color: var(--text-secondary); background: #f1f5f9; padding: 1px 5px; border-radius: 5px; }
+    .item-cat { font-size: 0.64rem; font-weight: 600; background: #f1f5f9; color: #475569; padding: 2px 7px; border-radius: 6px; display: inline-block; margin-top: 5px; }
+
+    .card-top-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+      flex-shrink: 0;
+    }
+
+    .box-factor-btn {
+      height: 28px;
+      padding: 0 8px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .box-factor-btn.custom {
+      background: var(--amber-soft);
+      border-color: #f59e0b;
+      color: var(--amber-dark);
+    }
+
+    .calc-btn {
+      height: 30px;
+      padding: 0 9px;
+      border-radius: 8px;
+      border: 1px solid #bfdbfe;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .unit-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: #f1f5f9;
+      padding: 3px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .unit-pill {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .unit-pill.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    .unit-breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      font-size: 0.69rem;
+      color: var(--text-muted);
+      text-align: center;
+      background: #f8fafc;
+      padding: 6px;
+      border-radius: 8px;
+      border: 1px dashed #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .unit-breakdown strong { color: var(--text-main); }
+
+    .item-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      background: var(--bg-subtle);
+      border: 1px solid #edf2f7;
+      padding: 7px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .item-metrics span strong { display: block; font-size: 0.84rem; color: var(--text-main); margin-top: 1px; }
+
+    .count-controls { display: flex; align-items: center; gap: 6px; }
+    .step-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 11px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 1.3rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .step-btn:active { transform: scale(0.94); background: #e2e8f0; }
+
+    .qty-input {
+      flex: 1;
+      height: 44px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border: 2px solid #cbd5e1;
+      border-radius: 11px;
+      width: 100%;
+      min-width: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .qty-input:focus { outline: none; border-color: var(--primary); }
+
+    .item-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      border-top: 1px dashed var(--border);
+      padding-top: 7px;
+    }
+
+    .summary-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+    @media (min-width: 640px) { .summary-cards { grid-template-columns: repeat(3, 1fr); gap: 10px; } }
+    .sum-box { background: #fff; padding: 12px; border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+    .sum-box h4 { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+    .sum-box p { font-size: 1.05rem; font-weight: 800; margin-top: 4px; }
+
+    .table-wrapper { background: #fff; border-radius: 14px; border: 1px solid var(--border); overflow-x: auto; box-shadow: var(--shadow-md); }
+    .summary-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .summary-table th, .summary-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    .summary-table th { background: #f8fafc; font-weight: 700; white-space: nowrap; }
+    .summary-table .num { text-align: right; white-space: nowrap; }
+
+    .modal { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 14px; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(9, 14, 26, 0.65); backdrop-filter: blur(4px); }
+    .modal-content { position: relative; background: #fff; width: 100%; max-width: 410px; border-radius: 18px; padding: 18px; z-index: 101; box-shadow: var(--shadow-lg); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .close-modal-btn { background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+    .modal-meta { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 12px; }
+    .calc-grid { display: flex; flex-direction: column; gap: 10px; }
+    .calc-field label { display: block; font-size: 0.76rem; font-weight: 600; margin-bottom: 4px; }
+    .calc-field input { width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 1rem; font-weight: 700; }
+    .calc-preview { margin-top: 12px; padding: 10px 12px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .preview-num { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+    .modal-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 200;
+      white-space: nowrap;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-badge">94</div>
+        <div>
+          <h1>Inventario Costo · Dpto. 94</h1>
+          <p class="subtitle">Frutas y Verduras · Local 155</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-export-excel" class="btn btn-success"><span>📥 Excel</span></button>
+        <button id="btn-reset" class="btn btn-danger-outline"><span>🗑️</span></button>
+      </div>
+    </div>
+
+    <div class="kpi-bar">
+      <div class="kpi-card"><span class="kpi-label">Avance</span><span class="kpi-value" id="kpi-avance">0 / 70</span></div>
+      <div class="kpi-card"><span class="kpi-label">Total Físico</span><span class="kpi-value" id="kpi-total-fisico">0</span></div>
+      <div class="kpi-card"><span class="kpi-label">Costo Contado</span><span class="kpi-value" id="kpi-costo-contado">$0</span></div>
+    </div>
+
+    <nav class="tabs-nav" role="tablist">
+      <button class="tab-btn active" data-tab="deposito">📦 Depósito <span class="tab-badge" id="badge-deposito">0</span></button>
+      <button class="tab-btn" data-tab="piso">🛒 Piso de Ventas <span class="tab-badge" id="badge-piso">0</span></button>
+      <button class="tab-btn" data-tab="resumen">📊 Resumen <span class="tab-badge" id="badge-resumen">70</span></button>
+    </nav>
+
+    <div class="controls-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="search-input" placeholder="Buscar por descripción, ITEM o UPC..." autocomplete="off" />
+        <button id="clear-search" class="clear-btn hidden">✕</button>
+      </div>
+      <div class="filter-row">
+        <select id="category-filter"><option value="ALL">Todas las categorías</option></select>
+        <select id="status-filter">
+          <option value="ALL">Todos los ítems</option>
+          <option value="PENDING">Pendientes por contar</option>
+          <option value="COUNTED">Ya contados</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <div id="section-banner" class="section-banner banner-deposito">
+      <span id="section-banner-icon">📦</span>
+      <div id="section-banner-text"><strong>Modo Conteo: DEPÓSITO</strong> — Marca <strong>Caja</strong>, <strong>Kg</strong> o <strong>Unidad</strong> y anota el conteo físico real.</div>
+    </div>
+
+    <section id="count-list" class="items-grid"></section>
+
+    <section id="summary-view" class="summary-container hidden">
+      <div class="summary-cards">
+        <div class="sum-box"><h4>Total Unid. Físico</h4><p id="sum-unid-fis">0</p></div>
+        <div class="sum-box"><h4>Depósito ($)</h4><p id="sum-costo-dep">$0</p></div>
+        <div class="sum-box"><h4>Piso Ventas ($)</h4><p id="sum-costo-piso">$0</p></div>
+      </div>
+      <div class="table-wrapper">
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>Ítem / Descripción</th>
+              <th class="num">Dep.</th>
+              <th class="num">Piso</th>
+              <th class="num">Total Fís.</th>
+              <th class="num">Costo Unit.</th>
+              <th class="num">Costo Total ($)</th>
+            </tr>
+          </thead>
+          <tbody id="summary-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL CALCULADORA MIXTA -->
+  <div id="calc-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-item-title">Calculadora de Conteo</h3>
+        <button id="close-modal" class="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-meta" id="modal-item-meta"></p>
+        <div class="calc-grid">
+          <div class="calc-field"><label for="calc-cajas">Cantidad de Cajas / Bultos</label><input type="number" id="calc-cajas" inputmode="decimal" step="any" placeholder="0" /></div>
+          <div class="calc-field"><label for="calc-factor">Unid/Kg por Caja (editable)</label><input type="number" id="calc-factor" inputmode="decimal" step="any" /></div>
+          <div class="calc-field"><label for="calc-sueltas">+ Unidades / Kilos Sueltos</label><input type="number" id="calc-sueltas" inputmode="decimal" step="any" placeholder="0" /></div>
+        </div>
+        <div class="calc-preview">
+          <span>Total en <strong id="modal-section-name">Depósito</strong>:</span>
+          <strong id="calc-total-preview" class="preview-num">0</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-calc-replace" class="btn btn-secondary">Reemplazar valor</button>
+        <button id="btn-calc-add" class="btn btn-primary">+ Sumar al conteo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR CANTIDAD POR CAJA -->
+  <div id="box-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" id="box-modal-backdrop"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="box-modal-title">Cantidad por Caja</h3>
+        <button id="close-box-modal" class="close-modal-btn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-meta" id="box-modal-meta"></p>
+        <div class="calc-grid">
+          <div class="calc-field">
+            <label for="box-custom-factor">Unidades o Kg que trae cada caja hoy</label>
+            <input type="number" id="box-custom-factor" inputmode="decimal" step="any" min="0.01" placeholder="Ej: 12" />
+          </div>
+        </div>
+        <div class="calc-preview">
+          <span>Valor en Maestra:</span>
+          <strong id="box-maestra-ref" class="preview-num">0</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-box-restore" class="btn btn-secondary">Usar Maestra</button>
+        <button id="btn-box-save" class="btn btn-primary">Guardar Caja</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="data.js"></script>
+  <script>
+    const STORAGE_KEY = "inventario_costo_dpto94_local155_v4";
+    let activeTab = "deposito";
+    let counts = loadCounts();
+    let activeModalItem = null;
+    let activeBoxItem = null;
+
+    const fmtCLP = (n) => new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(Math.round(n || 0));
+    const fmtNum = (n) => new Intl.NumberFormat("es-CL", { maximumFractionDigits: 2 }).format(n || 0);
+
+    function loadCounts() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+    }
+
+    function saveCounts() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(counts));
+      updateKPIs();
+    }
+
+    function ensureRecord(code) {
+      if (!counts[code]) {
+        counts[code] = {
+          deposito: { caja: null, kg: null, und: null },
+          piso: { caja: null, kg: null, und: null },
+          unitMode: "und",
+          customQtyCaja: null
+        };
+      }
+      if (!counts[code].deposito) counts[code].deposito = { caja: null, kg: null, und: null };
+      if (!counts[code].piso) counts[code].piso = { caja: null, kg: null, und: null };
+      if (!counts[code].unitMode) counts[code].unitMode = "und";
+      if (counts[code].customQtyCaja === undefined) counts[code].customQtyCaja = null;
+      return counts[code];
+    }
+
+    function getEffectiveQtyCaja(item) {
+      const rec = ensureRecord(item.item);
+      if (rec.customQtyCaja !== null && !isNaN(rec.customQtyCaja) && rec.customQtyCaja > 0) {
+        return rec.customQtyCaja;
+      }
+      return item.qtyCaja || 1;
+    }
+
+    function getSectionTotal(item, section) {
+      const rec = ensureRecord(item.item);
+      const sec = rec[section];
+      const cajas = sec.caja || 0;
+      const kg = sec.kg || 0;
+      const und = sec.und || 0;
+      const factor = getEffectiveQtyCaja(item);
+      return (cajas * factor) + kg + und;
+    }
+
+    function hasSectionCount(code, section) {
+      const rec = ensureRecord(code);
+      const sec = rec[section];
+      return sec.caja !== null || sec.kg !== null || sec.und !== null;
+    }
+
+    function hasAnyCount(code) {
+      return hasSectionCount(code, "deposito") || hasSectionCount(code, "piso");
+    }
+
+    function setUnitValue(code, section, unitKey, rawVal) {
+      const rec = ensureRecord(code);
+      rec[section][unitKey] = (rawVal === "" || rawVal === null || isNaN(rawVal)) ? null : Math.max(0, parseFloat(rawVal));
+      saveCounts();
+    }
+
+    function initCategories() {
+      const select = document.getElementById("category-filter");
+      [...new Set(MAESTRA_DPTO_94.map((i) => i.cat))].sort().forEach((cat) => {
+        const opt = document.createElement("option");
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+      });
+    }
+
+    function getFilteredItems() {
+      const q = document.getElementById("search-input").value.trim().toLowerCase();
+      const cat = document.getElementById("category-filter").value;
+      const status = document.getElementById("status-filter").value;
+
+      return MAESTRA_DPTO_94.filter((item) => {
+        if (q && !item.desc.toLowerCase().includes(q) && !item.item.includes(q) && !item.upc.includes(q)) return false;
+        if (cat !== "ALL" && item.cat !== cat) return false;
+        const counted = hasAnyCount(item.item);
+        if (status === "PENDING" && counted) return false;
+        if (status === "COUNTED" && !counted) return false;
+        return true;
+      });
+    }
+
+    function renderList() {
+      const listEl = document.getElementById("count-list");
+      const summaryEl = document.getElementById("summary-view");
+      const bannerEl = document.getElementById("section-banner");
+
+      if (activeTab === "resumen") {
+        listEl.classList.add("hidden");
+        bannerEl.classList.add("hidden");
+        summaryEl.classList.remove("hidden");
+        renderSummary();
+        return;
+      }
+
+      summaryEl.classList.add("hidden");
+      listEl.classList.remove("hidden");
+      bannerEl.classList.remove("hidden");
+
+      if (activeTab === "deposito") {
+        bannerEl.className = "section-banner banner-deposito";
+        document.getElementById("section-banner-icon").textContent = "📦";
+        document.getElementById("section-banner-text").innerHTML = "<strong>Modo Conteo: DEPÓSITO</strong> — Marca <strong>Caja</strong>, <strong>Kg</strong> o <strong>Unidad</strong> y anota el conteo físico real.";
+      } else {
+        bannerEl.className = "section-banner banner-piso";
+        document.getElementById("section-banner-icon").textContent = "🛒";
+        document.getElementById("section-banner-text").innerHTML = "<strong>Modo Conteo: PISO DE VENTAS</strong> — Marca <strong>Caja</strong>, <strong>Kg</strong> o <strong>Unidad</strong> y anota el conteo físico real.";
+      }
+
+      const items = getFilteredItems();
+      listEl.innerHTML = "";
+      if (!items.length) {
+        listEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:30px;color:#64748b;">No se encontraron ítems con esos filtros.</div>`;
+        return;
+      }
+
+      items.forEach((item) => {
+        const rec = ensureRecord(item.item);
+        const mode = rec.unitMode;
+        const secData = rec[activeTab];
+        const currentVal = secData[mode];
+        const secTotal = getSectionTotal(item, activeTab);
+        const effCaja = getEffectiveQtyCaja(item);
+        const isCustomCaja = rec.customQtyCaja !== null && rec.customQtyCaja > 0;
+
+        const otherSection = activeTab === "deposito" ? "piso" : "deposito";
+        const otherLabel = activeTab === "deposito" ? "Piso" : "Depósito";
+        const otherTotal = getSectionTotal(item, otherSection);
+        const totalFisico = secTotal + otherTotal;
+        const isCounted = hasSectionCount(item.item, activeTab);
+
+        const modeLabels = {
+          caja: `Caja (x${fmtNum(effCaja)})`,
+          kg: "Kilogramos (Kg)",
+          und: "Unidades (Und)"
+        };
+
+        const card = document.createElement("article");
+        card.className = `item-card ${isCounted ? "counted" : ""}`;
+        card.innerHTML = `
+          <div class="item-header">
+            <div>
+              <div class="item-title">${item.desc}</div>
+              <div class="item-codes">ITEM: <strong>${item.item}</strong> · UPC: ${item.upc}</div>
+              <span class="item-cat">${item.cat}</span>
+            </div>
+            <div class="card-top-actions">
+              <button type="button" class="box-factor-btn ${isCustomCaja ? "custom" : ""}" data-editbox="${item.item}" title="Cambiar cantidad por caja">
+                ✏️ Caja: x${fmtNum(effCaja)}${isCustomCaja ? ` (M:${item.qtyCaja})` : ""}
+              </button>
+              <button type="button" class="calc-btn" data-calc="${item.item}">🧮 Mixto</button>
+            </div>
+          </div>
+
+          <div class="unit-selector" role="group" aria-label="Tipo de conteo">
+            <button type="button" class="unit-pill ${mode === "caja" ? "active" : ""}" data-unit="caja" data-item="${item.item}">📦 Caja</button>
+            <button type="button" class="unit-pill ${mode === "kg" ? "active" : ""}" data-unit="kg" data-item="${item.item}">⚖️ Kg</button>
+            <button type="button" class="unit-pill ${mode === "und" ? "active" : ""}" data-unit="und" data-item="${item.item}">🔢 Unidad</button>
+          </div>
+
+          <div class="unit-breakdown">
+            <span>Caj: <strong>${fmtNum(secData.caja || 0)}</strong> (x${fmtNum(effCaja)})</span>
+            <span>Kg: <strong>${fmtNum(secData.kg || 0)}</strong></span>
+            <span>Und: <strong>${fmtNum(secData.und || 0)}</strong></span>
+          </div>
+
+          <div class="item-metrics">
+            <span>Costo Unit.<strong>${fmtCLP(item.costo)}</strong></span>
+            <span>Total Físico<strong>${fmtNum(totalFisico)}</strong></span>
+          </div>
+
+          <div class="count-controls">
+            <button type="button" class="step-btn" data-step="-1" data-item="${item.item}">−</button>
+            <input
+              type="number"
+              inputmode="decimal"
+              step="any"
+              class="qty-input"
+              data-input="${item.item}"
+              placeholder="${modeLabels[mode]}"
+              value="${currentVal !== null ? currentVal : ""}"
+            />
+            <button type="button" class="step-btn" data-step="1" data-item="${item.item}">+</button>
+          </div>
+
+          <div class="item-footer">
+            <span>En ${otherLabel}: <strong>${fmtNum(otherTotal)}</strong></span>
+            <span>Costo Contado: <strong>${fmtCLP(totalFisico * item.costo)}</strong></span>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function renderSummary() {
+      const tbody = document.getElementById("summary-tbody");
+      const items = getFilteredItems();
+      tbody.innerHTML = "";
+
+      let totUnidFis = 0, totCostoDep = 0, totCostoPiso = 0;
+      MAESTRA_DPTO_94.forEach((item) => {
+        const dep = getSectionTotal(item, "deposito");
+        const piso = getSectionTotal(item, "piso");
+        totUnidFis += dep + piso;
+        totCostoDep += dep * item.costo;
+        totCostoPiso += piso * item.costo;
+      });
+
+      document.getElementById("sum-unid-fis").textContent = fmtNum(totUnidFis);
+      document.getElementById("sum-costo-dep").textContent = fmtCLP(totCostoDep);
+      document.getElementById("sum-costo-piso").textContent = fmtCLP(totCostoPiso);
+
+      items.forEach((item) => {
+        const dep = getSectionTotal(item, "deposito");
+        const piso = getSectionTotal(item, "piso");
+        const totalFis = dep + piso;
+        const costoTotal = totalFis * item.costo;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${item.desc}</strong><br><small style="color:#64748b">${item.item}</small></td>
+          <td class="num">${fmtNum(dep)}</td>
+          <td class="num">${fmtNum(piso)}</td>
+          <td class="num"><strong>${fmtNum(totalFis)}</strong></td>
+          <td class="num">${fmtCLP(item.costo)}</td>
+          <td class="num"><strong>${fmtCLP(costoTotal)}</strong></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateKPIs() {
+      let countedItems = 0, depCounted = 0, pisoCounted = 0, totalFisicoGlobal = 0, costoContado = 0;
+      MAESTRA_DPTO_94.forEach((item) => {
+        const dHas = hasSectionCount(item.item, "deposito");
+        const pHas = hasSectionCount(item.item, "piso");
+        if (dHas) depCounted++;
+        if (pHas) pisoCounted++;
+        if (dHas || pHas) countedItems++;
+
+        const totalFis = getSectionTotal(item, "deposito") + getSectionTotal(item, "piso");
+        totalFisicoGlobal += totalFis;
+        costoContado += totalFis * item.costo;
+      });
+
+      document.getElementById("kpi-avance").textContent = `${countedItems} / ${MAESTRA_DPTO_94.length}`;
+      document.getElementById("kpi-total-fisico").textContent = fmtNum(totalFisicoGlobal);
+      document.getElementById("kpi-costo-contado").textContent = fmtCLP(costoContado);
+      document.getElementById("badge-deposito").textContent = depCounted;
+      document.getElementById("badge-piso").textContent = pisoCounted;
+    }
+
+    function openBoxModal(code) {
+      const item = MAESTRA_DPTO_94.find((i) => i.item === code);
+      if (!item) return;
+      activeBoxItem = item;
+      const effCaja = getEffectiveQtyCaja(item);
+
+      document.getElementById("box-modal-title").textContent = `Caja: ${item.desc}`;
+      document.getElementById("box-modal-meta").textContent = `ITEM ${item.item} · Ajusta cuántas unidades o kg trae cada caja`;
+      document.getElementById("box-maestra-ref").textContent = `x${fmtNum(item.qtyCaja || 1)}`;
+      document.getElementById("box-custom-factor").value = effCaja;
+
+      document.getElementById("box-modal").classList.remove("hidden");
+      document.getElementById("box-custom-factor").focus();
+    }
+
+    function closeBoxModal() {
+      document.getElementById("box-modal").classList.add("hidden");
+      activeBoxItem = null;
+    }
+
+    function openCalcModal(code) {
+      const item = MAESTRA_DPTO_94.find((i) => i.item === code);
+      if (!item) return;
+      activeModalItem = item;
+      const effCaja = getEffectiveQtyCaja(item);
+
+      document.getElementById("modal-item-title").textContent = item.desc;
+      document.getElementById("modal-item-meta").textContent = `ITEM ${item.item} · Factor Caja actual: ${fmtNum(effCaja)} (Maestra: ${item.qtyCaja})`;
+      document.getElementById("modal-section-name").textContent = activeTab === "deposito" ? "Depósito" : "Piso de Ventas";
+      document.getElementById("calc-cajas").value = "";
+      document.getElementById("calc-factor").value = effCaja;
+      document.getElementById("calc-sueltas").value = "";
+      updateCalcPreview();
+      document.getElementById("calc-modal").classList.remove("hidden");
+    }
+
+    function updateCalcPreview() {
+      const cajas = parseFloat(document.getElementById("calc-cajas").value) || 0;
+      const factor = parseFloat(document.getElementById("calc-factor").value) || 0;
+      const sueltas = parseFloat(document.getElementById("calc-sueltas").value) || 0;
+      const total = cajas * factor + sueltas;
+      document.getElementById("calc-total-preview").textContent = fmtNum(total);
+      return total;
+    }
+
+    function closeCalcModal() {
+      document.getElementById("calc-modal").classList.add("hidden");
+      activeModalItem = null;
+    }
+
+    function exportToExcel() {
+      const rows = MAESTRA_DPTO_94.map((item) => {
+        const rec = ensureRecord(item.item);
+        const effCaja = getEffectiveQtyCaja(item);
+        const dep = getSectionTotal(item, "deposito");
+        const piso = getSectionTotal(item, "piso");
+        const totalFis = dep + piso;
+        return {
+          "N° DPTO": 94,
+          ITEM: Number(item.item),
+          "UPC MAESTRA": item.upc,
+          DESCRIPCION: item.desc,
+          CATEGORIA: item.cat,
+          "FACTOR CAJA MAESTRA": item.qtyCaja,
+          "FACTOR CAJA USADO": effCaja,
+          "DEP CAJ": rec.deposito.caja || 0,
+          "DEP KG": rec.deposito.kg || 0,
+          "DEP UND": rec.deposito.und || 0,
+          "CONTEO DEPOSITO": dep,
+          "PISO CAJ": rec.piso.caja || 0,
+          "PISO KG": rec.piso.kg || 0,
+          "PISO UND": rec.piso.und || 0,
+          "CONTEO PISO VENTAS": piso,
+          "TOTAL FISICO": totalFis,
+          "COSTO UNITARIO": item.costo,
+          "COSTO TOTAL FISICO": totalFis * item.costo
+        };
+      });
+      const ws = XLSX.utils.json_to_sheet(rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Inventario_Dpto_94");
+      XLSX.writeFile(wb, `Inventario_Costo_Dpto94_L155_${new Date().toISOString().slice(0, 10)}.xlsx`);
+      showToast("📥 Excel descargado correctamente");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 2500);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCategories();
+      updateKPIs();
+      renderList();
+
+      document.querySelectorAll(".tab-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeTab = btn.dataset.tab;
+          renderList();
+        });
+      });
+
+      const searchInput = document.getElementById("search-input");
+      const clearBtn = document.getElementById("clear-search");
+      searchInput.addEventListener("input", () => { clearBtn.classList.toggle("hidden", !searchInput.value); renderList(); });
+      clearBtn.addEventListener("click", () => { searchInput.value = ""; clearBtn.classList.add("hidden"); renderList(); });
+      document.getElementById("category-filter").addEventListener("change", renderList);
+      document.getElementById("status-filter").addEventListener("change", renderList);
+
+      const countList = document.getElementById("count-list");
+      countList.addEventListener("input", (e) => {
+        if (e.target.matches(".qty-input")) {
+          const code = e.target.dataset.input;
+          const rec = ensureRecord(code);
+          setUnitValue(code, activeTab, rec.unitMode, e.target.value);
+          const card = e.target.closest(".item-card");
+          card.classList.toggle("counted", hasSectionCount(code, activeTab));
+        }
+      });
+
+      countList.addEventListener("click", (e) => {
+        const boxBtn = e.target.closest("[data-editbox]");
+        if (boxBtn) {
+          openBoxModal(boxBtn.dataset.editbox);
+          return;
+        }
+
+        const unitPill = e.target.closest(".unit-pill");
+        if (unitPill) {
+          const code = unitPill.dataset.item;
+          const rec = ensureRecord(code);
+          rec.unitMode = unitPill.dataset.unit;
+          saveCounts();
+          renderList();
+          return;
+        }
+
+        const stepBtn = e.target.closest(".step-btn");
+        if (stepBtn) {
+          const code = stepBtn.dataset.item;
+          const delta = parseFloat(stepBtn.dataset.step);
+          const rec = ensureRecord(code);
+          const mode = rec.unitMode;
+          const current = rec[activeTab][mode] || 0;
+          setUnitValue(code, activeTab, mode, Math.max(0, current + delta));
+          renderList();
+          return;
+        }
+
+        const calcBtn = e.target.closest(".calc-btn");
+        if (calcBtn) openCalcModal(calcBtn.dataset.calc);
+      });
+
+      document.getElementById("close-box-modal").addEventListener("click", closeBoxModal);
+      document.getElementById("box-modal-backdrop").addEventListener("click", closeBoxModal);
+
+      document.getElementById("btn-box-save").addEventListener("click", () => {
+        if (!activeBoxItem) return;
+        const val = parseFloat(document.getElementById("box-custom-factor").value);
+        if (isNaN(val) || val <= 0) {
+          showToast("⚠️ Ingresa un número mayor a 0");
+          return;
+        }
+        const rec = ensureRecord(activeBoxItem.item);
+        rec.customQtyCaja = val;
+        saveCounts();
+        closeBoxModal();
+        renderList();
+        showToast(`📦 Caja actualizada a x${fmtNum(val)}`);
+      });
+
+      document.getElementById("btn-box-restore").addEventListener("click", () => {
+        if (!activeBoxItem) return;
+        const rec = ensureRecord(activeBoxItem.item);
+        rec.customQtyCaja = null;
+        saveCounts();
+        closeBoxModal();
+        renderList();
+        showToast(`↩️ Restaurado a Maestra (x${activeBoxItem.qtyCaja})`);
+      });
+
+      ["calc-cajas", "calc-factor", "calc-sueltas"].forEach((id) => document.getElementById(id).addEventListener("input", updateCalcPreview));
+      document.getElementById("close-modal").addEventListener("click", closeCalcModal);
+      document.querySelector(".modal-backdrop").addEventListener("click", closeCalcModal);
+
+      document.getElementById("btn-calc-replace").addEventListener("click", () => {
+        if (!activeModalItem) return;
+        const val = updateCalcPreview();
+        setUnitValue(activeModalItem.item, activeTab, "und", val);
+        closeCalcModal(); renderList(); showToast("✅ Cantidad actualizada");
+      });
+
+      document.getElementById("btn-calc-add").addEventListener("click", () => {
+        if (!activeModalItem) return;
+        const addVal = updateCalcPreview();
+        const rec = ensureRecord(activeModalItem.item);
+        const current = rec[activeTab].und || 0;
+        setUnitValue(activeModalItem.item, activeTab, "und", current + addVal);
+        closeCalcModal(); renderList(); showToast(`➕ Sumado +${fmtNum(addVal)}`);
+      });
+
+      document.getElementById("btn-export-excel").addEventListener("click", exportToExcel);
+      document.getElementById("btn-reset").addEventListener("click", () => {
+        if (confirm("¿Seguro que deseas borrar todo el conteo de Depósito y Piso de Ventas?")) {
+          counts = {}; saveCounts(); renderList(); showToast("🗑️ Conteo reiniciado");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
